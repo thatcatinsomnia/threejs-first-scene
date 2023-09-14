@@ -12,6 +12,7 @@ const cubes: Cube[] = [];
 const scene = new THREE.Scene();
 
 // 創建 camera，threejs 中有兩種 camera，這裡介紹最常見的: PerspectiveCamera，99.99999999% 時間都會使用它。
+
 /**
  * params:
  * 1. FOV(Field Of View)，垂直方向
@@ -30,6 +31,10 @@ const renderer = new THREE.WebGLRenderer();
 // 初始化大小
 renderer.setSize(screenWidth, screenHeight);
 renderer.setClearColor('#373349');
+
+// 設定不要超過 2
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
 document.getElementById('app')!.appendChild(renderer.domElement);
 
 
@@ -44,15 +49,22 @@ const material = new THREE.MeshBasicMaterial({ color: 'hotpink' });
 // 加到場景之中，預設位置會在 (0, 0, 0);
 // scene.add(cube);
 
-function generateCubes(size: number) {
-  for (let i = 0; i < size; i++) {
+function getViewport() {
+  // 角度變弧度
+  const fov = camera.fov * Math.PI / 180;
+  const h = 2 * Math.tan(fov / 2) * 5
+
+  return { height: h }
+}
+
+function generateCubes(count: number = 100) {
+  for (let i = 0; i < count; i++) {
     // 產生新 cube, geometry 及 material 共用，可以避免重複的物件
     const cube = new THREE.Mesh(geometry, material);
 
     // 隨機位置
     cube.position.x = (Math.random() - 0.5) * screenWidth * 0.02;
     cube.position.y = (Math.random() - 0.5) * screenHeight * 0.02;
-    cube.position.z = (Math.random() - 0.5) * 2 * 3;
 
     // 隨機大小
     const scale = Math.random();
@@ -82,14 +94,21 @@ function handleResize() {
   });
 }
 
+const clock = new THREE.Clock();
+
 function animate() {
+  // const elapsedTime = closk.getElapsedTime();
+  
+  const { height } = getViewport();
+  
   cubes.forEach(cube => {
-    cube.position.y += Math.random() * 0.01;
+    cube.position.y += Math.random() * 0.01 * 10;
+
     cube.rotation.x += Math.random() * 0.01;
     cube.rotation.y += Math.random() * 0.01;
 
-    if (cube.position.y > screenHeight / 2 * 0.02) {
-      cube.position.y = -screenHeight / 2 * 0.02
+    if (cube.position.y > height / 2 * 1.2) {
+      cube.position.y = -height / 2 * 1.2
     }
   });
   
@@ -97,6 +116,6 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-generateCubes(100);
+generateCubes();
 handleResize();
 animate();
