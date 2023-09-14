@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+canvas {
+  position: fixed;
+}
+
+h1 {
+  color: white;
+  font-size: 4rem;
+  z-index: 1;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
